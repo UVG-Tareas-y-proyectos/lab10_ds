@@ -28,4 +28,5 @@ La base cubre enero de 2009 a junio de 2026. Deben considerarse el cambio metodo
 - `datos/`: series procesadas, métricas y predicciones.
 - `figuras/`: imágenes utilizadas en el informe.
 - `generar_figuras.py`: script para reproducir las figuras del informe.
+- `informe_avance.docx`: versión editable del documento de diseño.
 - `informe_avance.pdf`: informe de avance compilado.
