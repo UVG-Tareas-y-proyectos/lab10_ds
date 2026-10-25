@@ -1,32 +1,106 @@
-# Avance del Laboratorio 10
+# Laboratorio 10 Visualización interactiva
 
-El prototipo utiliza los datos del proyecto sobre ingreso de turistas y excursionistas a Guatemala. Incluye una serie mensual enlazada con el desglose por vía de ingreso, el patrón estacional, la comparación de cinco modelos del Laboratorio 1 y las predicciones LSTM del Laboratorio 2.
+Observatorio del flujo turístico a Guatemala para directivos y responsables de planificación. Integra ocho visualizaciones interactivas con datos académicos de turistas y excursionistas, resultados guardados del Laboratorio 1 y predicciones históricas LSTM del Laboratorio 2. No entrena modelos nuevos.
 
-## Ejecución
+## Ejecutar
+
+Requiere Python 3.11 o 3.12. Desde la raíz:
 
 ```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
+python -m src.preparar_datos
 python -m streamlit run app.py
 ```
 
-## Interacción principal
+En macOS/Linux active el entorno con `source .venv/bin/activate`. También se puede ejecutar directamente con `.venv\Scripts\python.exe -m streamlit run app.py` en Windows, sin cambiar la política de PowerShell. Si faltan los procesados, la primera apertura los genera; esta preparación puede tardar al leer el Excel. Después se carga la información en caché. No se necesita una clave ni un servicio externo.
 
-1. Seleccione el periodo desde la barra lateral.
-2. Haga clic en un punto de la serie histórica.
-3. La gráfica de vías de ingreso cambia al mes seleccionado.
-4. Use las pestañas para consultar estacionalidad, modelos y limitaciones.
+## Recorrido de uso
 
-## Datos
+1. Seleccione años y meses en la barra lateral. Para comparar 2026 con años anteriores use los meses 1–6.
+2. Elija nivel mensual, trimestral o anual y las gráficas que quiere consultar.
+3. En **Exploración**, haga clic en un punto de la serie: cambiarán el selector de mes y las barras por vía. Los puntos agregados abren el último mes disponible de su intervalo; el selector permite consultar los demás meses.
+4. En **Mercados y acceso**, consulte regiones, elija una región para el ranking de países y filtre las fronteras por vía.
+5. En **Estacionalidad y modelos**, compare tres modelos simples preseleccionados (SES, Holt-Winters y Seasonal naive), alterne MAE/RMSE o elija modelos adicionales. Consulte observado y estimado LSTM por serie. Estas vistas conservan su periodo de referencia y no cambian con los filtros históricos.
+6. En **Metodología**, revise las restricciones y descargue la consulta o el documento de diseño.
 
-Los archivos de `datos/` se derivan de la base académica `Base_Migracion_2009-2026jun.xlsx` usada en los laboratorios 1, 2 y 9. El tablero filtra las categorías `Turista` y `Excursionista`; no suma la categoría general `Viajero`.
+Todas las gráficas permiten consultar valores emergentes y usar zoom; las de líneas permiten ocultar series con la leyenda. Las tarjetas, controles y tablas no se cuentan como gráficas.
 
-La base cubre enero de 2009 a junio de 2026. Deben considerarse el cambio metodológico desde 2023, la pérdida de detalle marítimo desde 2017, el periodo atípico 2020–2021 y la cobertura parcial de 2026.
+## Ocho visualizaciones
+
+| Vista | Pregunta de gestión | Interacción |
+| --- | --- | --- |
+| 1 Evolución temporal | ¿Cuándo aumenta o disminuye el flujo? | Filtros, zoom, escala temporal y selección de puntos |
+| 2 Desglose por vía | ¿Cómo se reparte el mes consultado? | Enlace desde la serie, selector alternativo y zoom |
+| 3 Evolución regional | ¿Qué mercados regionales aportan al flujo? | Periodo, nivel de detalle y leyenda |
+| 4 Países de residencia | ¿Qué países concentran ingresos en una región? | Región, periodo y cantidad de países |
+| 5 Puntos de ingreso | ¿Dónde se concentra el acceso? | Vía, periodo y cantidad de fronteras |
+| 6 Índice estacional | ¿Qué meses superan la referencia histórica? | Hover y zoom; referencia fija 2009–2019 |
+| 7 Error de modelos | ¿Qué error registran los modelos ya evaluados? | Selección de modelos, MAE/RMSE, hover y zoom |
+| 8 Observado y LSTM | ¿Dónde difiere la estimación del registro? | Serie modelada, leyenda y zoom |
 
 ## Estructura
 
-- `app.py`: aplicación Streamlit.
-- `datos/`: series procesadas, métricas y predicciones.
-- `figuras/`: imágenes utilizadas en el informe.
-- `generar_figuras.py`: script para reproducir las figuras del informe.
-- `informe_avance.docx`: versión editable del documento de diseño.
-- `informe_avance.pdf`: informe de avance compilado.
+Se adopta la convención de [CC3084 del catedrático](https://github.com/menene/cc3084-2026-02-40):
+
+```text
+app.py                       entrada compatible con el avance
+src/
+  preparar_datos.py           agregaciones, validaciones y auditoría
+  analisis.py                 transformaciones de consulta
+  tablero.py                  interfaz Streamlit y ocho gráficas
+  generar_figuras.py          ilustraciones reproducibles del informe
+  generar_informe.py          edición del formato del avance en una copia
+  exportar_pdf.ps1            exportación opcional con Word en Windows
+notebooks/
+  visualizacion-interactiva.ipynb
+data/raw/                    fuente y resultados anteriores sin modificar
+data/processed/              derivados reproducibles, no versionados
+docs/                        informe final PDF y Word
+figuras/                     ilustraciones del informe
+tests/                       verificaciones de datos e interfaz
+codebook.md                  variables, procedencia y limitaciones
+requirements.txt             dependencias de ejecución verificadas
+```
+
+`datos/`, `informe_avance.docx` e `informe_avance.pdf` conservan el material de avance de Milton como referencia histórica. La aplicación final lee los derivados de `data/processed/`.
+
+## Fuentes y corrección de métricas
+
+La base cubre enero de 2009 a junio de 2026. Se filtran Turista y Excursionista, sin sumar Viajero ni la categoría independiente Cruceristas. Las cifras representan ingresos registrados, no personas únicas. Las sumas se contrastan con la serie del avance antes de generar las tablas nuevas.
+
+El ranking final usa la exportación original del Lab 1 en `data/raw/modelos_lab1.csv`. Difiere de la transcripción del avance: entre los tres modelos simples, SES presenta RMSE 180,598.23, Holt-Winters 184,529.72 y Seasonal naive 219,663.87. Los resultados originales se conservan sin volver a entrenar. `Prophet - respaldo aditivo` identifica una alternativa empleada en el Lab 1 cuando Prophet no estaba disponible; no equivale a la biblioteca Prophet. Las métricas LSTM se presentan por separado. El [diccionario de datos](codebook.md) documenta los campos y la procedencia.
+
+Hay cambio metodológico desde 2023, pérdida de detalle marítimo desde 2017, un periodo atípico 2020–2021 y cobertura parcial de 2026. Los ceros registrados no demuestran ausencia de actividad. Las predicciones mostradas corresponden a evaluación histórica y no garantizan resultados futuros.
+
+## Verificación
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python -m src.preparar_datos
+python -m pytest -q
+```
+
+Se incluyen once pruebas de conservación de totales, cobertura, agregaciones, selección fuera de filtro, procedencia de métricas, ocho gráficas, filtros, tres niveles temporales, estados sin datos y selección de modelos. El enlace se comprueba además en navegador: seleccionar diciembre de 2014 actualiza el mes y las barras por vía.
+
+## Documento de diseño
+
+- [Informe final PDF](docs/informe_final.pdf)
+- [Informe final editable](docs/informe_final.docx)
+
+Para regenerar las ilustraciones y el Word desde el formato del avance:
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python generar_figuras.py
+python -m src.generar_informe
+```
+
+En Windows con Microsoft Word instalado puede exportarse el PDF con:
+
+```powershell
+.\src\exportar_pdf.ps1 -InputPath .\docs\informe_final.docx
+```
+
+El formato original del avance permanece intacto. Revise visualmente el PDF después de regenerarlo.
