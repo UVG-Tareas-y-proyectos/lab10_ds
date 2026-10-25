@@ -1,0 +1,3 @@
+clave,serie,configuracion,arquitectura,ventana,mae_test,rmse_test,smape_test
+total_viajeros,Total mensual de viajeros,apilada_01,apilada,6,74089.95595663,85804.50202665053,34.38841093975157
+america_norte,Región: América del Norte,apilada_01,apilada,6,26247.4699623687,30752.1393677073,54.866873078459165

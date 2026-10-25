@@ -5,3 +5,8 @@ __pycache__/
 *.out
 *.toc
 tmp/
+.venv/
+.pytest_cache/
+data/processed/*
+!data/processed/.gitkeep
+.ipynb_checkpoints/
