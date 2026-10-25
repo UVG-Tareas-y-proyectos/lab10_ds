@@ -4,7 +4,10 @@ import pandas as pd
 
 def agregar(serie, nivel):
     frecuencia = {"Mensual": "MS", "Trimestral": "QS", "Anual": "YS"}[nivel]
-    return serie.set_index("fecha").resample(frecuencia).sum(numeric_only=True).reset_index()
+    grupos = serie.set_index("fecha").resample(frecuencia)
+    totales = grupos.sum(numeric_only=True)
+    # Los meses excluidos por el usuario no son observaciones de flujo cero.
+    return totales.loc[grupos.size().gt(0)].reset_index()
 
 
 def fecha_del_evento(evento, fechas, respaldo):

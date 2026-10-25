@@ -28,6 +28,10 @@ def test_agregaciones_y_anio_parcial():
         a = agregar(m,nivel)
         assert len(a)==longitud
         assert np.isclose(a.viajeros.sum(),m.viajeros.sum())
+    semestre = m[m.fecha.dt.month.le(6)]
+    visible = agregar(semestre, "Mensual")
+    assert len(visible) == len(semestre)
+    assert visible.fecha.dt.month.le(6).all()
 
 
 def test_estacionalidad_solo_referencia_completa():

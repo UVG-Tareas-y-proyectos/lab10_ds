@@ -1,0 +1,4 @@
+data/raw/* -text
+datos/*.csv -text
+*.docx -text
+*.pdf -text
