@@ -2,6 +2,9 @@
 from copy import deepcopy
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
+from io import BytesIO
+import argparse
+import subprocess
 from lxml import etree as E
 from PIL import Image
 
@@ -11,8 +14,18 @@ W = "{"+NS["w"]+"}"
 R = "{"+NS["r"]+"}"
 
 
-def generar():
-    with ZipFile(ROOT/"informe_avance.docx") as z:
+def generar(plantilla=None):
+    if plantilla:
+        fuente = Path(plantilla)
+    else:
+        resultado = subprocess.run(
+            ['git', 'show', '99f89f4:informe_avance.docx'],
+            cwd=ROOT, capture_output=True, check=False,
+        )
+        if resultado.returncode:
+            raise RuntimeError('Se necesita el historial completo de Git o una plantilla externa indicada con --plantilla RUTA.')
+        fuente = BytesIO(resultado.stdout)
+    with ZipFile(fuente) as z:
         partes={n:z.read(n) for n in z.namelist()}
     doc=E.fromstring(partes["word/document.xml"])
     body=doc.find("w:body",NS)
@@ -137,10 +150,13 @@ def generar():
     ajustes=E.fromstring(partes['word/settings.xml']);update=ajustes.find(W+'updateFields')
     if update is None:update=E.SubElement(ajustes,W+'updateFields')
     update.set(W+'val','true');partes['word/settings.xml']=E.tostring(ajustes,xml_declaration=True,encoding='UTF-8',standalone=True)
-    destino=ROOT/'docs/informe_final.docx';destino.parent.mkdir(exist_ok=True)
+    destino=ROOT/'work/informe_final.docx';destino.parent.mkdir(exist_ok=True)
     with ZipFile(destino,'w',ZIP_DEFLATED) as z:
         for nombre,contenido in partes.items():z.writestr(nombre,contenido)
     print(destino)
 
 
-if __name__=='__main__':generar()
+if __name__=='__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--plantilla', help='Plantilla externa opcional; por defecto se recupera del historial de Git.')
+    generar(parser.parse_args().plantilla)

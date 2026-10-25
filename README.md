@@ -57,14 +57,14 @@ notebooks/
   visualizacion-interactiva.ipynb
 data/raw/                    fuente y resultados anteriores sin modificar
 data/processed/              derivados reproducibles, no versionados
-docs/                        informe final PDF y Word
+docs/                        únicamente el informe final PDF
 figuras/                     ilustraciones del informe
 tests/                       verificaciones de datos e interfaz
 codebook.md                  variables, procedencia y limitaciones
 requirements.txt             dependencias de ejecución verificadas
 ```
 
-`datos/`, `informe_avance.docx` e `informe_avance.pdf` conservan el material de avance de Milton como referencia histórica. La aplicación final lee los derivados de `data/processed/`.
+`datos/` conserva los datos del avance como referencia. Los documentos de la entrega parcial están disponibles en el historial de Git; la entrega actual incluye únicamente el informe final PDF. La aplicación final lee los derivados de `data/processed/`.
 
 ## Fuentes y corrección de métricas
 
@@ -87,9 +87,8 @@ Se incluyen once pruebas de conservación de totales, cobertura, agregaciones, s
 ## Documento de diseño
 
 - [Informe final PDF](docs/informe_final.pdf)
-- [Informe final editable](docs/informe_final.docx)
 
-Para regenerar las ilustraciones y el Word desde el formato del avance:
+Para regenerar las ilustraciones y preparar el documento temporal desde una clonación con historial completo:
 
 ```powershell
 python -m pip install -r requirements-dev.txt
@@ -97,10 +96,12 @@ python generar_figuras.py
 python -m src.generar_informe
 ```
 
-En Windows con Microsoft Word instalado puede exportarse el PDF con:
+El generador recupera la plantilla del historial de Git y escribe el Word temporal en `work/`, que no se versiona. Si se usa un ZIP sin historial, se puede proporcionar una plantilla externa con `python -m src.generar_informe --plantilla RUTA`.
+
+En Windows con Microsoft Word instalado puede actualizarse el PDF con:
 
 ```powershell
-.\src\exportar_pdf.ps1 -InputPath .\docs\informe_final.docx
+.\src\exportar_pdf.ps1 -InputPath .\work\informe_final.docx -OutputPath .\docs\informe_final.pdf
 ```
 
-El formato original del avance permanece intacto. Revise visualmente el PDF después de regenerarlo.
+Revise visualmente el PDF después de regenerarlo. `docs/` contiene solo la entrega final en PDF.

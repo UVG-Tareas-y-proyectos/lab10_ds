@@ -30,7 +30,7 @@ Los grupos sin etiqueta se conservan como `Sin especificar`. No se deduplican pe
 
 `data/raw/modelos_lab1.csv` es la exportación original de `data/processed/comparacion_modelos.csv` del Laboratorio 1 entregado por el equipo. Sus métricas difieren de las transcritas en `datos/metricas_modelos_serie_total.csv` del avance. El tablero final usa la exportación verificable. Por ejemplo, SES registra RMSE 180,598.23; Holt-Winters aditivo 184,529.72; Seasonal naive 219,663.87. Prophet aparece como `Prophet - respaldo aditivo`: no representa un entrenamiento de la biblioteca Prophet. El archivo del avance se conserva para trazabilidad.
 
-`datos/` y los informes de avance conservan el material recibido. Las nuevas tablas se generan desde `data/raw/` y no se versionan, siguiendo la estructura del curso. El total mensual se contrasta con el avance antes de generar resultados.
+`datos/` conserva los datos recibidos del avance. Los documentos de la entrega parcial están disponibles en el historial de Git; `docs/` contiene únicamente el PDF final. Las nuevas tablas se generan desde `data/raw/` y no se versionan, siguiendo la estructura del curso. El total mensual se contrasta con el avance antes de generar resultados.
 
 ## Límites
 

@@ -1,9 +1,10 @@
 param(
-    [Parameter(Mandatory=$true)][string]$InputPath
+    [Parameter(Mandatory=$true)][string]$InputPath,
+    [string]$OutputPath
 )
 $ErrorActionPreference = 'Stop'
 $sourcePath = (Resolve-Path -LiteralPath $InputPath).Path
-$pdfPath = [System.IO.Path]::ChangeExtension($sourcePath, '.pdf')
+$pdfPath = if ($OutputPath) { $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutputPath) } else { [System.IO.Path]::ChangeExtension($sourcePath, '.pdf') }
 $word = $null
 $document = $null
 try {
