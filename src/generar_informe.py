@@ -145,6 +145,12 @@ def generar(plantilla=None):
             cambiar(celda.find('w:p',NS),texto)
     for texto in ['Menene. CC3084 Data Science 2026. Estructura de proyectos del curso. https://github.com/menene/cc3084-2026-02-40','Streamlit. st.plotly_chart y AppTest. https://docs.streamlit.io/develop/api-reference/charts/st.plotly_chart y https://docs.streamlit.io/develop/api-reference/app-testing/st.testing.v1.apptest']:
         nuevo=deepcopy(p[81]);cambiar(nuevo,texto);body.insert(len(body)-1,nuevo)
+    # La portada ya identifica el informe y al equipo; omitir el bloque repetido.
+    for idx, etiqueta in [(8,'Curso:'),(9,'Actividad:'),(10,'Documento:'),(11,'Equipo:'),(12,'Fecha:')]:
+        contenido = ''.join(p[idx].itertext())
+        if etiqueta not in contenido:
+            raise ValueError(f'No se encontró el campo esperado: {etiqueta}')
+        body.remove(p[idx])
     partes['word/document.xml']=E.tostring(doc,xml_declaration=True,encoding='UTF-8',standalone=True)
     partes['word/_rels/document.xml.rels']=E.tostring(rel,xml_declaration=True,encoding='UTF-8',standalone=True)
     ajustes=E.fromstring(partes['word/settings.xml']);update=ajustes.find(W+'updateFields')
